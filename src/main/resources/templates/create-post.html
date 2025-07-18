@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Create New Post</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+  <script src="https://cdn.tiny.cloud/1/a5mcw0faas8nawrdhtpo853lzautbhva9064xz7fbahsit7g/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      background: #f4f6fa;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: #ffffff;
+      border-radius: 15px;
+      box-shadow: 5px 5px 15px #d1d9e6, -5px -5px 15px #ffffff;
+    }
+
+    .navbar-brand {
+      font-weight: 600;
+      font-size: 1.6rem;
+      color: #343a40;
+    }
+
+    .btn-outline-dark {
+      border: 2px solid #4e73df;
+      color: #4e73df;
+    }
+
+    .btn-outline-dark:hover {
+      background-color: #4e73df;
+      color: #fff;
+    }
+
+    /* Form Card */
+    .form-container {
+      background: #f1f3f6;
+      border-radius: 1rem;
+      box-shadow: 5px 5px 15px #d1d9e6, -5px -5px 15px #ffffff;
+      padding: 2rem;
+      margin-top: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .form-label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+      border-radius: 0.75rem;
+      box-shadow: inset 3px 3px 7px #d1d9e6, inset -3px -3px 7px #ffffff;
+      border: none;
+    }
+
+    .form-control:focus, .form-select:focus {
+      box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+      border-color: #4e73df;
+    }
+
+    h2 {
+      color: #4e73df;
+      font-weight: 600;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background-color: #4e73df;
+      border: none;
+      border-radius: 30px;
+    }
+
+    .btn-primary:hover {
+      background-color: #375abf;
+    }
+
+    .btn-secondary {
+      border-radius: 30px;
+    }
+
+    footer {
+      background-color: #f1f3f6;
+      color: #555;
+      font-size: 0.9rem;
+      padding: 1rem 0;
+      text-align: center;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    @media (max-width: 576px) {
+      .form-container {
+        padding: 1rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg px-4 py-2 rounded mb-3">
+  <a class="navbar-brand" href="/">📖 My Blog</a>
+  <div class="ms-auto d-flex align-items-center">
+    <a class="btn btn-outline-dark rounded-pill me-2 px-3" href="/profile">👤 Profile</a>
+    <form th:action="@{/logout}" method="post" style="display:inline;">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+      <button type="submit" class="btn btn-outline-dark rounded-pill px-3">Logout</button>
+    </form>
+  </div>
+</nav>
+
+<!-- Form -->
+<div class="container">
+  <div class="form-container mx-auto col-lg-8">
+    <h2 class="mb-4 text-center">✍️ Create New Post</h2>
+
+    <form th:action="@{/posts}" method="post" th:object="${newPost}" onsubmit="return beforeSubmit();">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" id="title" th:field="*{title}" class="form-control" required/>
+      </div>
+
+      <div class="mb-3">
+        <label for="category" class="form-label">Category</label>
+        <select id="category" th:field="*{category}" class="form-select" required>
+          <option value="" disabled selected>Select category</option>
+          <option value="Tech">Tech</option>
+          <option value="Lifestyle">Lifestyle</option>
+          <option value="Education">Education</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="content" class="form-label">Content</label>
+        <textarea id="content" th:field="*{content}" class="form-control" rows="8"></textarea>
+      </div>
+
+      <!-- New input for Thumbnail Image URL -->
+      <div class="mb-3">
+        <label for="imageUrl" class="form-label">Thumbnail Image URL</label>
+        <input type="text" id="imageUrl" th:field="*{imageUrl}" class="form-control" placeholder="Enter the image URL (optional)" />
+      </div>
+
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary px-4">Create</button>
+        <a th:href="@{/profile}" class="btn btn-secondary ms-2">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<footer class="mt-auto">
+  &copy; 2025 My Blog App | Made with ❤️
+</footer>
+
+<script>
+  function beforeSubmit() {
+    tinymce.triggerSave();
+    const content = document.getElementById('content');
+    if (!content.value.trim()) {
+      alert("Content is required!");
+      return false;
+    }
+    return true;
+  }
+
+  tinymce.init({
+    selector: '#content',
+    height: 300,
+    plugins: 'image code link',
+    toolbar: 'undo redo | bold italic underline | alignleft aligncenter alignright | link image | code',
+    automatic_uploads: true,
+    file_picker_types: 'image',  // File upload remains
+    setup: function (editor) {
+      editor.on('change', function () {
+        tinymce.triggerSave();
+      });
+    }
+  });
+</script>
+
+</body>
+</html>
