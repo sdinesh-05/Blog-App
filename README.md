@@ -13,7 +13,7 @@ This is a simple blog application built with Spring Boot. It allows users to cre
 - Spring Boot
 - Spring Data JPA
 - Thymeleaf
-- H2 Database (for development)
+- MySQL Database (for development)
 
 ## Getting Started
 
